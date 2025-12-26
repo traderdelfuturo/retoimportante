@@ -1,7 +1,7 @@
 const HaxBallJS = require("haxball.js");
 
 async function start() {
-    console.log("--- [SISTEMA] INICIANDO... ---");
+    console.log("--- [SISTEMA] ARRANCANDO MOTOR ---");
     try {
         const mod = await HaxBallJS;
         const HBInit = (typeof mod === 'function') ? mod : mod.default;
@@ -13,27 +13,28 @@ async function start() {
             password: "123",
             noPlayer: true,
             token: process.env.HAXBALL_TOKEN,
+            // FLAGS AGRESIVOS PARA SERVIDORES LINUX:
             puppeteerArgs: [
                 '--no-sandbox',
                 '--disable-setuid-sandbox',
-                '--disable-dev-shm-usage'
-            ],
-            // ESTO LE DICE A RAILWAY DÓNDE ESTÁ EL NAVEGADOR:
-            executablePath: '/usr/bin/chromium-browser'
+                '--disable-dev-shm-usage',
+                '--disable-accelerated-2d-canvas',
+                '--no-first-run',
+                '--no-zygote',
+                '--single-process',
+                '--disable-gpu'
+            ]
         });
 
         room.onRoomLink = (link) => {
-            console.log("-----------------------------------------");
-            console.log("¡¡¡POR FIN!!! EL LINK ES ESTE:");
+            console.log("*****************************************");
+            console.log("¡LISTO! ENTRA AQUÍ:");
             console.log(link);
-            console.log("-----------------------------------------");
+            console.log("*****************************************");
         };
 
-        // Si hay un error interno de HaxBall, esto lo atrapará
-        room.onProxyError = (err) => console.error("Error de Proxy:", err);
-
     } catch (error) {
-        console.error("--- [ERROR] No se pudo crear la sala:", error);
+        console.error("--- [ERROR] FALLÓ EL ARRANQUE:", error);
     }
 }
 
