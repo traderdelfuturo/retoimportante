@@ -1,7 +1,7 @@
 const HaxBallJS = require("haxball.js");
 
 async function start() {
-    console.log("--- [DEBUG] INICIANDO HOST ---");
+    console.log("--- [SISTEMA] INICIANDO... ---");
     try {
         const mod = await HaxBallJS;
         const HBInit = (typeof mod === 'function') ? mod : mod.default;
@@ -13,26 +13,24 @@ async function start() {
             password: "123",
             noPlayer: true,
             token: process.env.HAXBALL_TOKEN,
-            // Configuración vital para Railway
             puppeteerArgs: [
                 '--no-sandbox',
                 '--disable-setuid-sandbox',
-                '--disable-dev-shm-usage',
-                '--disable-gpu'
-            ]
+                '--disable-dev-shm-usage'
+            ],
+            // ESTO LE DICE A RAILWAY DÓNDE ESTÁ EL NAVEGADOR:
+            executablePath: '/usr/bin/chromium-browser'
         });
 
         room.onRoomLink = (link) => {
             console.log("-----------------------------------------");
-            console.log("¡¡¡SALA ABIERTA!!! LINK:");
+            console.log("¡¡¡POR FIN!!! EL LINK ES ESTE:");
             console.log(link);
             console.log("-----------------------------------------");
         };
 
-        // Si el token es malo o expira, esto debería saltar
-        setTimeout(() => {
-            console.log("--- [INFO] Si no ves el link aún, el Token puede ser inválido o el servidor está lento. ---");
-        }, 15000);
+        // Si hay un error interno de HaxBall, esto lo atrapará
+        room.onProxyError = (err) => console.error("Error de Proxy:", err);
 
     } catch (error) {
         console.error("--- [ERROR] No se pudo crear la sala:", error);
