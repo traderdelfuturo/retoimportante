@@ -1,0 +1,12 @@
+{
+  "name": "haxball-host",
+  "version": "1.0.0",
+  "description": "Host privado para Colombia y Portugal",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "haxball.js": "^1.1.7"
+  }
+}
