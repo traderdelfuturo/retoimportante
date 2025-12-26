@@ -1,24 +1,33 @@
 const HaxBallJS = require("haxball.js");
 
-HaxBallJS.then((HBInit) => {
-  const room = HBInit({
-    roomName: "COLOMBIA vs PORTUGAL",
-    maxPlayers: 3,
-    public: false, // Cambia a true si quieres que aparezca en la lista global
-    password: "123", // Pon la clave que quieras
-    noPlayer: true, // El host no juega, solo administra
-    token: process.env.HAXBALL_TOKEN // Esto lo configuramos en Railway
-  });
+async function init() {
+    // Esta parte detecta si la librería viene como Promesa o como función directa
+    let HBInit;
+    if (typeof HaxBallJS.then === 'function') {
+        HBInit = await HaxBallJS;
+    } else if (typeof HaxBallJS === 'function') {
+        HBInit = HaxBallJS;
+    } else {
+        HBInit = await HaxBallJS.default;
+    }
 
-  room.onRoomLink = (link) => {
-    console.log("-----------------------------------------");
-    console.log("SALA ABIERTA. COPIA ESTE LINK:");
-    console.log(link);
-    console.log("-----------------------------------------");
-  };
+    const room = HBInit({
+        roomName: "SALA PRIVADA COL-POR",
+        maxPlayers: 2,
+        public: false,
+        password: "123", // Cambia la clave si quieres
+        noPlayer: true,
+        token: process.env.HAXBALL_TOKEN
+    });
 
-  // Esto es para que el primer jugador que entre sea admin
-  room.onPlayerJoin = (player) => {
-    room.setPlayerAdmin(player.id, true);
-  };
-});
+    room.onRoomLink = (link) => {
+        console.log("-----------------------------------------");
+        console.log("SALA ABIERTA! COPIA ESTE LINK:");
+        console.log(link);
+        console.log("-----------------------------------------");
+    };
+
+    room.onPlayerJoin = (p) => room.setPlayerAdmin(p.id, true);
+}
+
+init().catch(err => console.error("Error al iniciar:", err));
