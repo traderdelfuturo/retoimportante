@@ -3,32 +3,25 @@ const HaxBallJS = require("haxball.js");
 async function start() {
     console.log("--- [DEBUG] SCRIPT INICIADO ---");
     try {
-        // Esperamos a que la librería cargue
         const mod = await HaxBallJS;
-        
-        // BUSCAMOS LA FUNCIÓN (Aquí estaba el fallo)
-        // La buscamos en mod, en mod.default o donde sea
         const HBInit = (typeof mod === 'function') ? mod : mod.default;
 
-        if (typeof HBInit !== 'function') {
-            console.error("--- [ERROR] No se encontró la función de HaxBall en el módulo ---");
-            return;
-        }
-
-        console.log("--- [DEBUG] FUNCIÓN ENCONTRADA. CREANDO SALA... ---");
+        console.log("--- [DEBUG] INTENTANDO ABRIR LA SALA (CON ARGUMENTOS)... ---");
 
         const room = HBInit({
             roomName: "SALA PRIVADA COL-POR",
             maxPlayers: 10,
-            public: false, // Cámbialo a true si quieres que salga en la lista
-            password: "123", 
+            public: false,
+            password: "123",
             noPlayer: true,
-            token: process.env.HAXBALL_TOKEN
+            token: process.env.HAXBALL_TOKEN,
+            // ESTO ES LO QUE FALTA PARA QUE ARRANQUE EN RAILWAY:
+            puppeteerArgs: ['--no-sandbox', '--disable-setuid-sandbox']
         });
 
         room.onRoomLink = (link) => {
             console.log("-----------------------------------------");
-            console.log("¡SALA ABIERTA CON ÉXITO!");
+            console.log("¡¡SALA ABIERTA CON ÉXITO!!");
             console.log("LINK PARA JUGAR: " + link);
             console.log("-----------------------------------------");
         };
