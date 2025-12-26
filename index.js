@@ -1,12 +1,10 @@
 const HaxBallJS = require("haxball.js");
 
 async function start() {
-    console.log("--- [DEBUG] SCRIPT INICIADO ---");
+    console.log("--- [DEBUG] INICIANDO HOST ---");
     try {
         const mod = await HaxBallJS;
         const HBInit = (typeof mod === 'function') ? mod : mod.default;
-
-        console.log("--- [DEBUG] INTENTANDO ABRIR LA SALA (CON ARGUMENTOS)... ---");
 
         const room = HBInit({
             roomName: "SALA PRIVADA COL-POR",
@@ -15,24 +13,29 @@ async function start() {
             password: "123",
             noPlayer: true,
             token: process.env.HAXBALL_TOKEN,
-            // ESTO ES LO QUE FALTA PARA QUE ARRANQUE EN RAILWAY:
-            puppeteerArgs: ['--no-sandbox', '--disable-setuid-sandbox']
+            // Configuración vital para Railway
+            puppeteerArgs: [
+                '--no-sandbox',
+                '--disable-setuid-sandbox',
+                '--disable-dev-shm-usage',
+                '--disable-gpu'
+            ]
         });
 
         room.onRoomLink = (link) => {
             console.log("-----------------------------------------");
-            console.log("¡¡SALA ABIERTA CON ÉXITO!!");
-            console.log("LINK PARA JUGAR: " + link);
+            console.log("¡¡¡SALA ABIERTA!!! LINK:");
+            console.log(link);
             console.log("-----------------------------------------");
         };
 
-        room.onPlayerJoin = (p) => {
-            console.log("Jugador unido: " + p.name);
-            room.setPlayerAdmin(p.id, true);
-        };
+        // Si el token es malo o expira, esto debería saltar
+        setTimeout(() => {
+            console.log("--- [INFO] Si no ves el link aún, el Token puede ser inválido o el servidor está lento. ---");
+        }, 15000);
 
     } catch (error) {
-        console.error("--- [ERROR FATAL] ---", error);
+        console.error("--- [ERROR] No se pudo crear la sala:", error);
     }
 }
 
